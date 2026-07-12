@@ -1,6 +1,30 @@
+# No args auto runs CLI list of options
+default: choose
+
+# Interactively choose which project task to execute right now
+choose:
+    @just --choose
+
 # Run the Leptos web server via Trunk and open it in your browser
-run-web:
-    trunk serve --port 3000 --open
+run:
+    env -u NO_COLOR trunk serve --port 3000 --open
+
+# Run the Leptos formatter
+fmt:
+    cargo leptosfmt
+
+# Build a fully minified production-ready release bundle in /dist
+build:
+    env -u NO_COLOR trunk build --release
+
+# Audit third-party dependencies for known vulnerabilities
+audit:
+    cargo audit
+
+# Deeply scrub all cargo build objects and Trunk generation files
+clean:
+    cargo clean
+    rm -rf dist
 
 # Check formatting, run lints, and execute tests locally
 check-all:
