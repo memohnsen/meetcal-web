@@ -1,5 +1,17 @@
 use crate::components::feature::FeatureSection;
+use crate::components::{footer::Footer, header::Header};
 use leptos::prelude::*;
+
+#[component]
+pub fn Home() -> impl IntoView {
+    view! {
+        <Header />
+        <TitleSection />
+        <BodySection />
+        <HighlightSection />
+        <Footer />
+    }
+}
 
 #[component]
 pub fn TitleSection() -> impl IntoView {
@@ -7,8 +19,12 @@ pub fn TitleSection() -> impl IntoView {
         <h1>"Your Competition Schedule, Simplified"</h1>
         <h4>"MeetCal transforms complex Olympic weightlifting competition schedules into an intuitive, easy-to-use mobile experience."</h4>
 
-        <button>"Download for iOS"</button>
-        <button>"Download for Android"</button>
+        <a href="https://apps.apple.com/us/app/meetcal/id6741133286">
+            <button>"Download for iOS"</button>
+        </a>
+        <a href="https://play.google.com/store/apps/details?id=com.memohnsen.meetcal">
+            <button>"Download for Android"</button>
+        </a>
     }
 }
 

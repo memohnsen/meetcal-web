@@ -1,5 +1,15 @@
+use crate::components::{footer::Footer, header::Header};
 use js_sys::Date;
 use leptos::prelude::*;
+
+#[component]
+pub fn TermsPage() -> impl IntoView {
+    view! {
+        <Header />
+        <TermsOfUse />
+        <Footer />
+    }
+}
 
 #[component]
 pub fn TermsOfUse() -> impl IntoView {

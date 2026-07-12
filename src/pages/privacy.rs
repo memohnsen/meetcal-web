@@ -1,5 +1,15 @@
+use crate::components::{footer::Footer, header::Header};
 use js_sys::Date;
 use leptos::prelude::*;
+
+#[component]
+pub fn PrivacyPage() -> impl IntoView {
+    view! {
+        <Header />
+        <PrivacyPolicy />
+        <Footer />
+    }
+}
 
 #[component]
 pub fn PrivacyPolicy() -> impl IntoView {
