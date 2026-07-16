@@ -25,6 +25,22 @@ pub fn TitleSection() -> impl IntoView {
         <a href="https://play.google.com/store/apps/details?id=com.memohnsen.meetcal">
             <button>"Download for Android"</button>
         </a>
+
+        <section class="cli-download" aria-labelledby="cli-download-title">
+            <div class="cli-download-copy">
+                <p class="cli-download-eyebrow">"MeetCal CLI"</p>
+                <h2 id="cli-download-title">"Full access to all data"</h2>
+                <p>"Full access to the entire MeetCal database straight from USAW/USAMW. Get deeper insights and details than what's in the app."</p>
+            </div>
+            <div class="cli-download-install">
+                <span>"Install with Homebrew"</span>
+                <code>"brew tap meetcal/tap && brew install meetcal"</code>
+                <div class="cli-install-alternative">
+                    <span>"Install with Cargo"</span>
+                    <code>"cargo install --git https://github.com/meetcal/meetcal-cli.git meetcal"</code>
+                </div>
+            </div>
+        </section>
     }
 }
 
