@@ -9,6 +9,16 @@ choose:
 run:
     env -u NO_COLOR trunk serve --port 3000 --open
 
+# Cargo fmt and clippy
+lint:
+    cargo fmt --all -- --check
+    cargo clippy --all-targets --locked -- -D warnings
+
+# Cargo fmt and test
+test:
+    cargo fmt --all -- --check
+    cargo test
+
 # Run the Leptos formatter
 fmt:
     cargo leptosfmt

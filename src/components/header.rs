@@ -4,18 +4,20 @@ use leptos_router::components::A;
 #[component]
 pub fn Header() -> impl IntoView {
     view! {
-        // TODO: add logo here
-        <A href="/">
-            <button>MeetCal</button>
-        </A>
-        <A href="/privacy">
-            <button>Privacy</button>
-        </A>
-        <A href="/terms">
-            <button>Terms</button>
-        </A>
-        <A href="/contact">
-            <button>Contact Us</button>
-        </A>
+        <header class="site-header">
+            <A href="/" attr:class="brand-link">
+                <img class="brand-logo" src="/logo.png" alt="MeetCal" />
+                <span>"MeetCal"</span>
+            </A>
+            <nav class="site-nav" aria-label="Primary navigation">
+                <A href="/privacy">"Privacy"</A>
+                <A href="/terms">"Terms"</A>
+                <A href="/contact">"Contact Us"</A>
+            </nav>
+            <A href="https://accounts.meetcal.app/sign-in" attr:class="profile-button">
+                <span class="profile-icon" aria-hidden="true"></span>
+                <span>"Profile"</span>
+            </A>
+        </header>
     }
 }
