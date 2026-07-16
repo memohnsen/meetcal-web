@@ -1,12 +1,15 @@
 use crate::components::feature::FeatureSection;
 use crate::components::{footer::Footer, header::Header};
 use leptos::prelude::*;
+use leptos_router::components::A;
 
 #[component]
 pub fn Home() -> impl IntoView {
     view! {
         <Header />
-        <TitleSection />
+        <HeroSection />
+        <DownloadSection />
+        <InteractionSection />
         <BodySection />
         <HighlightSection />
         <Footer />
@@ -14,33 +17,134 @@ pub fn Home() -> impl IntoView {
 }
 
 #[component]
-pub fn TitleSection() -> impl IntoView {
+pub fn HeroSection() -> impl IntoView {
     view! {
-        <h1>"Your Competition Schedule, Simplified"</h1>
-        <h4>"MeetCal transforms complex Olympic weightlifting competition schedules into an intuitive, easy-to-use mobile experience."</h4>
+        <section class="hero-section" aria-labelledby="hero-title">
+            <p class="hero-eyebrow">"Olympic weightlifting, organized"</p>
+            <h1 id="hero-title">"Your Competition Schedule, Simplified"</h1>
+            <p class="hero-copy">"MeetCal transforms complex Olympic weightlifting competition schedules into a clear experience for athletes, coaches, and spectators."</p>
+        </section>
+    }
+}
 
-        <a href="https://apps.apple.com/us/app/meetcal/id6741133286">
-            <button>"Download for iOS"</button>
-        </a>
-        <a href="https://play.google.com/store/apps/details?id=com.memohnsen.meetcal">
-            <button>"Download for Android"</button>
-        </a>
-
-        <section class="cli-download" aria-labelledby="cli-download-title">
-            <div class="cli-download-copy">
-                <p class="cli-download-eyebrow">"MeetCal CLI"</p>
-                <h2 id="cli-download-title">"Full access to all data"</h2>
-                <p>"Full access to the entire MeetCal database straight from USAW/USAMW. Get deeper insights and details than what's in the app."</p>
+#[component]
+pub fn DownloadSection() -> impl IntoView {
+    view! {
+        <section class="download-section" aria-labelledby="download-title">
+            <div class="download-copy">
+                <p class="section-eyebrow">"MeetCal for mobile"</p>
+                <h2 id="download-title">"Take meet day with you"</h2>
+                <p>"Save sessions, follow your club, and be ready for anything"</p>
             </div>
-            <div class="cli-download-install">
-                <span>"Install with Homebrew"</span>
-                <code>"brew tap meetcal/tap && brew install meetcal"</code>
-                <div class="cli-install-alternative">
-                    <span>"Install with Cargo"</span>
-                    <code>"cargo install --git https://github.com/meetcal/meetcal-cli.git meetcal"</code>
-                </div>
+            <div class="store-links" aria-label="Download the MeetCal mobile app">
+                <a class="store-link store-link-primary" href="https://apps.apple.com/us/app/meetcal/id6741133286">
+                    <span>"Download for iOS"</span>
+                </a>
+                <a class="store-link store-link-secondary" href="https://play.google.com/store/apps/details?id=com.memohnsen.meetcal">
+                    <span>"Download for Android"</span>
+                </a>
             </div>
         </section>
+    }
+}
+
+#[component]
+pub fn InteractionSection() -> impl IntoView {
+    view! {
+        <section class="interaction-section" aria-labelledby="interaction-title">
+            <div class="interaction-heading">
+                <p class="section-eyebrow">"MeetCal, your way"</p>
+                <h2 id="interaction-title">"Three ways to interact with MeetCal"</h2>
+                <p>"Use the experience that fits the moment—from the competition floor to deeper data exploration."</p>
+            </div>
+
+            <div class="interaction-grid">
+                <article class="interaction-card">
+                    <div class="interaction-card-number" aria-hidden="true">"01"</div>
+                    <p class="interaction-label">"The app"</p>
+                    <h3>"Stay ready on meet day"</h3>
+                    <p>"Browse schedules, save sessions, and follow athletes or teams from your phone or tablet."</p>
+                    <a class="interaction-link" href="https://apps.apple.com/us/app/meetcal/id6741133286">"Get the mobile app" <span aria-hidden="true">"→"</span></a>
+                </article>
+
+                <article class="interaction-card interaction-card-cli">
+                    <div class="interaction-card-number" aria-hidden="true">"02"</div>
+                    <p class="interaction-label">"The CLI"</p>
+                    <h3>"Work directly with the data"</h3>
+                    <p>"Search and explore the full MeetCal database from USAW and USAMW without leaving your terminal."</p>
+                    <div class="cli-install-options">
+                        <CopyCommand
+                            label="Homebrew"
+                            command="brew tap meetcal/tap && brew install meetcal"
+                        />
+                        <CopyCommand
+                            label="Cargo"
+                            command="cargo install --git https://github.com/meetcal/meetcal-cli.git meetcal"
+                        />
+                    </div>
+                </article>
+
+                <article class="interaction-card">
+                    <div class="interaction-card-number" aria-hidden="true">"03"</div>
+                    <p class="interaction-label">"The web"</p>
+                    <h3>"Explore from any browser"</h3>
+                    <p>"Look up qualifying totals, standards, results, rankings, and records with nothing to install."</p>
+                    <A href="/comp-data" attr:class="interaction-link">"Explore competition data" <span aria-hidden="true">"→"</span></A>
+                </article>
+            </div>
+        </section>
+    }
+}
+
+#[component]
+fn CopyCommand(label: &'static str, command: &'static str) -> impl IntoView {
+    let (copied, set_copied) = signal(false);
+
+    view! {
+        <div class="cli-command">
+            <span class="cli-command-label">{label}</span>
+            <div class="cli-command-box">
+                <code>{command}</code>
+                <button
+                    class="copy-command-button"
+                    type="button"
+                    aria-label=move || if copied.get() {
+                        format!("{label} install command copied")
+                    } else {
+                        format!("Copy {label} install command")
+                    }
+                    on:click=move |_| {
+                        let _ = leptos::web_sys::window()
+                            .expect("window should be available")
+                            .navigator()
+                            .clipboard()
+                            .write_text(command);
+
+                        set_copied.set(true);
+                        leptos::leptos_dom::helpers::set_timeout(
+                            move || set_copied.set(false),
+                            std::time::Duration::from_millis(1800),
+                        );
+                    }
+                >
+                    <svg
+                        class=move || if copied.get() { "copy-icon is-hidden" } else { "copy-icon" }
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <rect x="9" y="9" width="11" height="11" rx="2"></rect>
+                        <path d="M15 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h3"></path>
+                    </svg>
+                    <svg
+                        class=move || if copied.get() { "check-icon" } else { "check-icon is-hidden" }
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                    >
+                        <path d="m5 12 4 4L19 6"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
     }
 }
 

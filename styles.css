@@ -260,6 +260,11 @@ a {
 }
 
 .data-filter:focus { outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent); border-color: var(--accent); }
+.data-filters { display: flex; flex-wrap: wrap; gap: 12px; }
+.data-filters label { display: grid; gap: 5px; color: var(--text-secondary); font-size: 0.82rem; font-weight: 700; }
+.data-filters .data-filter { width: 180px; }
+.data-filters .data-sort { margin-left: auto; }
+.data-filters .data-sort .data-filter { width: 220px; }
 .data-status { margin: 22px 0; color: var(--text-secondary); }
 .data-status.error { color: #c43b3b; }
 
@@ -269,17 +274,85 @@ a {
 .data-table th { color: var(--text-secondary); font-size: 0.76rem; font-weight: 750; letter-spacing: 0.05em; text-transform: uppercase; }
 .data-table tbody tr:last-child td { border-bottom: 0; }
 .data-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 5%, var(--card)); }
+.data-table-skeleton { min-height: 420px; }
+.data-table-skeleton tbody tr:hover { background: transparent; }
+.data-skeleton {
+    display: block;
+    height: 14px;
+    min-width: 64px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--border) 25%, color-mix(in srgb, var(--border) 60%, var(--card)) 50%, var(--border) 75%);
+    background-size: 200% 100%;
+    animation: data-skeleton-shimmer 1.25s ease-in-out infinite;
+}
+.data-table-skeleton tbody td:nth-child(3n) .data-skeleton { width: 72%; }
+.data-table-skeleton tbody td:nth-child(3n + 1) .data-skeleton { width: 86%; }
+@keyframes data-skeleton-shimmer {
+    to { background-position: -200% 0; }
+}
 
 .result-search { display: flex; flex-wrap: wrap; gap: 10px; }
 .result-search .data-filter { width: 220px; }
 .data-search-button { min-height: 42px; padding: 9px 17px; border-radius: 9px; background: var(--accent); color: #fff; font-weight: 700; }
 .data-search-button:hover { background: var(--accent-deep); }
 
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.social-links {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.social-link {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    border-radius: 50%;
+    color: var(--text-secondary);
+    transition: color 0.15s ease, background 0.15s ease;
+}
+
+.social-link:hover {
+    background: color-mix(in srgb, var(--text-secondary) 12%, transparent);
+    color: var(--text);
+}
+
+.social-link:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+    outline-offset: 2px;
+}
+
+.social-link svg {
+    width: 19px;
+    height: 19px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+.social-link[href*="github.com"] svg {
+    fill: currentColor;
+    stroke: none;
+}
+
+.social-icon-dot {
+    fill: currentColor;
+    stroke: none;
+}
+
 .profile-button {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    margin-left: auto;
     padding: 9px 13px 9px 10px;
     border: 1px solid color-mix(in srgb, var(--text-secondary) 24%, var(--border));
     border-radius: 999px;
@@ -330,13 +403,30 @@ a {
 
 /* ---------- Hero ---------- */
 
-main > h1 {
+.hero-section {
+    width: min(1120px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: clamp(56px, 11vh, 120px) 0 clamp(48px, 8vh, 80px);
+    text-align: center;
+}
+
+.hero-eyebrow,
+.section-eyebrow {
+    margin: 0 0 15px;
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.hero-section h1 {
     font-size: clamp(2.6rem, 7vw, 4.6rem);
     font-weight: 800;
     letter-spacing: -0.045em;
     line-height: 1.04;
     max-width: 15ch;
-    margin: clamp(56px, 11vh, 120px) auto 24px;
+    margin: 0 auto 24px;
     background: linear-gradient(
         180deg,
         var(--text) 55%,
@@ -348,23 +438,72 @@ main > h1 {
     color: var(--text); /* fallback */
 }
 
-main > h4 {
+.hero-copy {
     font-size: clamp(1.05rem, 1.6vw, 1.25rem);
     font-weight: 400;
     line-height: 1.6;
     color: var(--text-secondary);
-    max-width: 50ch;
-    margin: 0 auto 40px;
+    max-width: 58ch;
+    margin: 0 auto;
 }
 
-/* Store download buttons (hero + footer CTA) */
+/* ---------- Mobile download ---------- */
 
-main > a[href*="apps.apple.com"] > button,
-main > a[href*="play.google.com"] > button {
-    display: inline-block;
-    margin: 6px 7px 0;
+.download-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 36px;
+    width: min(1120px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: clamp(28px, 4vw, 42px);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    background:
+        radial-gradient(circle at 90% 0%, rgba(0, 122, 255, 0.13), transparent 42%),
+        var(--card);
+    box-shadow: var(--shadow-lg);
+    text-align: left;
+}
+
+.download-copy {
+    max-width: 600px;
+}
+
+.download-copy h2 {
+    margin: 0 0 8px;
+    font-size: clamp(1.7rem, 3.5vw, 2.45rem);
+    letter-spacing: -0.035em;
+    line-height: 1.12;
+}
+
+.download-copy > p:last-child {
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+.store-links {
+    display: flex;
+    flex: 0 0 auto;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.store-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
     padding: 15px 32px;
     border-radius: 14px;
+    font-size: 16px;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.store-link-primary {
     background: linear-gradient(
         180deg,
         #1a8cff,
@@ -372,31 +511,24 @@ main > a[href*="play.google.com"] > button {
         var(--accent-deep)
     );
     color: #fff;
-    font-size: 16.5px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
     box-shadow:
         var(--btn-glow),
         inset 0 1px 0 rgba(255, 255, 255, 0.25);
-    transition:
-        transform 0.15s ease,
-        box-shadow 0.15s ease,
-        filter 0.15s ease;
 }
 
-main > a[href*="apps.apple.com"] > button:hover,
-main > a[href*="play.google.com"] > button:hover {
+.store-link:hover {
     transform: translateY(-2px);
+}
+
+.store-link-primary:hover {
     filter: brightness(1.06);
 }
 
-main > a[href*="apps.apple.com"] > button:active,
-main > a[href*="play.google.com"] > button:active {
+.store-link:active {
     transform: translateY(0);
-    filter: brightness(0.97);
 }
 
-main > a[href*="play.google.com"] > button {
+.store-link-secondary {
     background: var(--card);
     color: var(--accent);
     box-shadow:
@@ -404,94 +536,217 @@ main > a[href*="play.google.com"] > button {
         var(--shadow-sm);
 }
 
-main > a[href*="play.google.com"] > button:hover {
+.store-link-secondary:hover {
     box-shadow:
         inset 0 0 0 1px var(--accent),
         var(--shadow-sm);
-    filter: none;
 }
 
-.cli-download {
-    display: grid;
-    grid-template-columns: minmax(280px, 0.75fr) minmax(650px, 1.5fr);
-    gap: 28px;
+/* ---------- Ways to use MeetCal ---------- */
+
+.interaction-section {
     width: min(1120px, calc(100% - 40px));
-    margin: 30px auto 0;
-    padding: 22px 24px;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    background: var(--card);
-    box-shadow: var(--shadow-sm);
+    margin: clamp(88px, 14vh, 150px) auto 0;
+}
+
+.interaction-heading {
+    max-width: 660px;
+    margin: 0 auto 38px;
+    text-align: center;
+}
+
+.interaction-heading h2 {
+    margin: 0 0 12px;
+    font-size: clamp(2rem, 4.5vw, 3.35rem);
+    letter-spacing: -0.045em;
+    line-height: 1.04;
+}
+
+.interaction-heading > p:last-child {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+}
+
+.interaction-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
     text-align: left;
 }
 
-.cli-download-eyebrow {
-    margin: 0 0 5px;
+.interaction-card {
+    position: relative;
+    display: flex;
+    min-height: 350px;
+    flex-direction: column;
+    padding: 28px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: var(--card);
+    box-shadow: var(--shadow-sm);
+}
+
+.interaction-card-cli {
+    background:
+        linear-gradient(145deg, color-mix(in srgb, var(--accent) 9%, var(--card)), var(--card) 48%);
+}
+
+.interaction-card-number {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    color: color-mix(in srgb, var(--accent) 58%, var(--text-secondary));
+    font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+}
+
+.interaction-label {
+    margin: 0 0 34px;
     color: var(--accent);
     font-size: 0.76rem;
     font-weight: 750;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
 }
 
-.cli-download h2 {
-    margin: 0 0 6px;
-    font-size: 1.18rem;
-    letter-spacing: -0.02em;
-    line-height: 1.25;
+.interaction-card h3 {
+    margin: 0 0 10px;
+    font-size: 1.35rem;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
 }
 
-.cli-download-copy > p:last-child {
-    margin: 0;
+.interaction-card > p:not(.interaction-label) {
+    margin: 0 0 24px;
     color: var(--text-secondary);
-    font-size: 0.88rem;
-    line-height: 1.5;
+    font-size: 0.94rem;
 }
 
-.cli-download-install {
-    align-self: center;
+.interaction-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    margin-top: auto;
+    color: var(--accent);
+    font-size: 0.92rem;
+    font-weight: 700;
 }
 
-.cli-download-install span {
+.interaction-link span {
+    transition: transform 0.15s ease;
+}
+
+.interaction-link:hover span {
+    transform: translateX(3px);
+}
+
+.cli-install-options {
+    display: grid;
+    gap: 12px;
+    margin-top: auto;
+}
+
+.cli-command {
+    min-width: 0;
+}
+
+.cli-command-label {
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
     color: var(--text-secondary);
-    font-size: 0.76rem;
-    font-weight: 650;
-    letter-spacing: 0.04em;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
 }
 
-.cli-download code {
-    padding: 7px 9px;
+.cli-command-box {
+    position: relative;
+}
+
+.copy-command-button {
+    position: absolute;
+    top: 7px;
+    right: 7px;
+    display: grid;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    place-items: center;
     border: 1px solid var(--border);
     border-radius: 7px;
+    background: color-mix(in srgb, var(--text) 8%, var(--card));
+    color: var(--text-secondary);
+    transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.copy-command-button:hover {
+    border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+    background: color-mix(in srgb, var(--accent) 9%, var(--card));
+    color: var(--accent);
+}
+
+.copy-command-button:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+    outline-offset: 2px;
+}
+
+.copy-command-button svg {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 2;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.copy-command-button .check-icon {
+    color: #33b66b;
+}
+
+.copy-command-button .is-hidden {
+    opacity: 0;
+    transform: scale(0.65);
+}
+
+.cli-install-options code {
+    display: block;
+    min-height: 42px;
+    padding: 10px 44px 10px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
     background: color-mix(in srgb, var(--text) 6%, var(--card));
     color: var(--text);
     font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-    font-size: 0.78rem;
-    white-space: nowrap;
+    font-size: 0.7rem;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+    white-space: normal;
 }
 
-.cli-download-install > code {
-    display: block;
-    width: 100%;
-}
+@media (max-width: 940px) {
+    .download-section {
+        align-items: flex-start;
+        flex-direction: column;
+    }
 
-.cli-install-alternative {
-    margin-top: 12px;
-}
+    .store-links {
+        justify-content: flex-start;
+    }
 
-.cli-install-alternative code {
-    display: block;
-    width: 100%;
-}
+    .interaction-grid {
+        grid-template-columns: 1fr 1fr;
+    }
 
-@media (max-width: 1100px) {
-    .cli-download {
-        grid-template-columns: 1fr;
-        gap: 18px;
-        max-width: 660px;
+    .interaction-card-cli {
+        grid-row: span 2;
     }
 }
 
@@ -713,6 +968,23 @@ main > h2:last-of-type ~ a {
     padding: 22px 0 32px;
 }
 
+main > h2:last-of-type ~ a > button {
+    padding: 15px 32px;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #1a8cff, var(--accent) 45%, var(--accent-deep));
+    color: #fff;
+    font-size: 16.5px;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    box-shadow: var(--btn-glow), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+main > h2:last-of-type ~ a > button:hover {
+    filter: brightness(1.06);
+    transform: translateY(-2px);
+}
+
 /* © line */
 main > h2:last-of-type ~ p {
     margin: -1px auto 0;
@@ -834,11 +1106,48 @@ main main a:hover {
         padding: 8px 10px;
     }
 
-    .cli-download {
+    .header-actions {
+        gap: 4px;
+    }
+
+    .social-links {
+        gap: 0;
+    }
+
+    .social-link {
+        width: 32px;
+        height: 32px;
+    }
+
+    .hero-section,
+    .download-section,
+    .interaction-section {
+        width: min(100% - 24px, 1120px);
+    }
+
+    .hero-section {
+        padding-top: 48px;
+    }
+
+    .download-section {
+        gap: 24px;
+        padding: 24px;
+        border-radius: 18px;
+    }
+
+    .store-links,
+    .store-link {
+        width: 100%;
+    }
+
+    .interaction-grid {
         grid-template-columns: 1fr;
-        gap: 18px;
-        width: min(100% - 24px, 660px);
-        padding: 20px;
+    }
+
+    .interaction-card,
+    .interaction-card-cli {
+        grid-row: auto;
+        min-height: 320px;
     }
 
     main > div:has(> h4) {
