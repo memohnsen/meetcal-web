@@ -30,8 +30,8 @@ pub struct PurchasePackage {
 }
 
 #[wasm_bindgen(inline_js = r##"
-const CLERK_UI_VERSION = "1";
-const CLERK_JS_VERSION = "6";
+const CLERK_UI_VERSION = "1.25.5";
+const CLERK_JS_VERSION = "6.25.5";
 const REVENUECAT_JS_VERSION = "1.47.3";
 let revenueCatOperationQueue = Promise.resolve();
 
@@ -61,27 +61,11 @@ function clerkUserId() {
   return window.Clerk?.isSignedIn && window.Clerk.user ? window.Clerk.user.id : null;
 }
 
-function clerkDomainFromPublishableKey(publishableKey) {
-  const encodedDomain = publishableKey.split("_")[2];
-  if (!encodedDomain) throw new Error("CLERK_PUBLISHABLE_KEY is invalid");
-
-  try {
-    const normalized = encodedDomain
-      .replace(/-/g, "+")
-      .replace(/_/g, "/")
-      .padEnd(Math.ceil(encodedDomain.length / 4) * 4, "=");
-    return atob(normalized).replace(/\$$/, "");
-  } catch {
-    throw new Error("CLERK_PUBLISHABLE_KEY is invalid");
-  }
-}
-
 export async function initialize_clerk(publishableKey, onAuthChanged) {
   if (!publishableKey) throw new Error("CLERK_PUBLISHABLE_KEY is not configured");
 
-  const clerkDomain = clerkDomainFromPublishableKey(publishableKey);
-  const uiUrl = `https://${clerkDomain}/npm/@clerk/ui@${CLERK_UI_VERSION}/dist/ui.browser.js`;
-  const clerkUrl = `https://${clerkDomain}/npm/@clerk/clerk-js@${CLERK_JS_VERSION}/dist/clerk.browser.js`;
+  const uiUrl = `https://cdn.jsdelivr.net/npm/@clerk/ui@${CLERK_UI_VERSION}/dist/ui.browser.js`;
+  const clerkUrl = `https://cdn.jsdelivr.net/npm/@clerk/clerk-js@${CLERK_JS_VERSION}/dist/clerk.browser.js`;
 
   await loadScript(uiUrl);
   await loadScript(clerkUrl, { "data-clerk-publishable-key": publishableKey });

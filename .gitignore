@@ -2,3 +2,5 @@
 /dist
 .DS_store
 .env
+.vercel
+.env*
