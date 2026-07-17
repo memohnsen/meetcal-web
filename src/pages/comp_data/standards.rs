@@ -84,14 +84,14 @@ pub fn Standards() -> impl IntoView {
                                 "Gender"
                                 <select class="data-filter" on:change=move |event| set_gender.set(event_target_value(&event))>
                                     <option value="">"All genders"</option>
-                                    <SelectOptions values=genders selected=None />
+                                    <SelectOptions values=genders selected=Some(selected_gender.clone()) />
                                 </select>
                             </label>
                             <label>
                                 "Age"
                                 <select class="data-filter" on:change=move |event| set_age.set(event_target_value(&event))>
                                     <option value="">"All ages"</option>
-                                    <SelectOptions values=ages selected=None />
+                                    <SelectOptions values=ages selected=Some(selected_age.clone()) />
                                 </select>
                             </label>
                             <label class="data-sort">

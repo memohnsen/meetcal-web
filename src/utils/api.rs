@@ -3,12 +3,23 @@ use serde::{Serialize, de::DeserializeOwned};
 
 const DEFAULT_API_BASE_URL: &str = "https://api.meetcal.app";
 
+fn api_base_url() -> String {
+    if option_env!("VERCEL").is_some() {
+        web_sys::window()
+            .and_then(|window| window.location().origin().ok())
+            .map(|origin| format!("{origin}/api"))
+            .unwrap_or_else(|| DEFAULT_API_BASE_URL.to_owned())
+    } else {
+        DEFAULT_API_BASE_URL.to_owned()
+    }
+}
+
 /// path: /route
 pub async fn get_api_response<T>(path: &str) -> Result<Vec<T>, Error>
 where
     T: DeserializeOwned,
 {
-    let url = format!("{}{}", DEFAULT_API_BASE_URL, path);
+    let url = format!("{}{path}", api_base_url());
 
     let response = reqwest::Client::new()
         .get(&url)
@@ -31,7 +42,7 @@ where
     T: DeserializeOwned,
     Q: Serialize + ?Sized,
 {
-    let url = format!("{}{}", DEFAULT_API_BASE_URL, path);
+    let url = format!("{}{path}", api_base_url());
 
     let response = reqwest::Client::new()
         .get(&url)

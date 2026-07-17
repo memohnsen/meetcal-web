@@ -33,6 +33,7 @@ pub struct PurchasePackage {
 const CLERK_UI_VERSION = "1";
 const CLERK_JS_VERSION = "6";
 const REVENUECAT_JS_VERSION = "1.47.3";
+let revenueCatOperationQueue = Promise.resolve();
 
 function loadScript(src, attributes = {}) {
   return new Promise((resolve, reject) => {
@@ -107,12 +108,13 @@ export function mount_clerk_user_button(element, revenueCatApiKey, appUserId) {
       label: "Manage subscription",
       onClick: async () => {
         try {
-          const purchases = await revenueCatForUser(revenueCatApiKey, appUserId);
-          const customerInfo = await purchases.getCustomerInfo();
-          if (!customerInfo.managementURL) {
-            throw new Error("No manageable subscription was found for this account.");
-          }
-          window.location.assign(customerInfo.managementURL);
+          await withRevenueCatUser(revenueCatApiKey, appUserId, async purchases => {
+            const customerInfo = await purchases.getCustomerInfo();
+            if (!customerInfo.managementURL) {
+              throw new Error("No manageable subscription was found for this account.");
+            }
+            window.location.assign(customerInfo.managementURL);
+          });
         } catch (error) {
           window.alert(error?.message || "Subscription management is temporarily unavailable.");
         }
@@ -160,6 +162,19 @@ async function revenueCatForUser(apiKey, appUserId) {
   return purchases;
 }
 
+function withRevenueCatUser(apiKey, appUserId, operation) {
+  const run = async () => {
+    if (clerkUserId() !== appUserId) throw new Error("Your signed-in account changed. Please try again.");
+    const purchases = await revenueCatForUser(apiKey, appUserId);
+    if (clerkUserId() !== appUserId) throw new Error("Your signed-in account changed. Please try again.");
+    return operation(purchases);
+  };
+
+  const result = revenueCatOperationQueue.then(run, run);
+  revenueCatOperationQueue = result.catch(() => undefined);
+  return result;
+}
+
 function hasActiveEntitlement(customerInfo) {
   return Object.keys(customerInfo.entitlements.active).length > 0;
 }
@@ -183,41 +198,44 @@ function periodLabel(duration, productType) {
 }
 
 export async function check_revenuecat_entitlement(apiKey, appUserId) {
-  const purchases = await revenueCatForUser(apiKey, appUserId);
-  const customerInfo = await purchases.getCustomerInfo();
-  return hasActiveEntitlement(customerInfo);
+  return withRevenueCatUser(apiKey, appUserId, async purchases => {
+    const customerInfo = await purchases.getCustomerInfo();
+    return hasActiveEntitlement(customerInfo);
+  });
 }
 
 export async function get_revenuecat_packages(apiKey, appUserId) {
-  const purchases = await revenueCatForUser(apiKey, appUserId);
-  const offering = offeringWithWebPackages(await purchases.getOfferings());
-  if (!offering) return "[]";
+  return withRevenueCatUser(apiKey, appUserId, async purchases => {
+    const offering = offeringWithWebPackages(await purchases.getOfferings());
+    if (!offering) return "[]";
 
-  return JSON.stringify(offering.availablePackages.map(rcPackage => {
-    const product = rcPackage.webBillingProduct;
-    return {
-      identifier: rcPackage.identifier,
-      title: product.title || product.displayName || "MeetCal subscription",
-      description: product.description || null,
-      formattedPrice: product.currentPrice.formattedPrice,
-      periodLabel: periodLabel(product.normalPeriodDuration, product.productType),
-    };
-  }));
+    return JSON.stringify(offering.availablePackages.map(rcPackage => {
+      const product = rcPackage.webBillingProduct;
+      return {
+        identifier: rcPackage.identifier,
+        title: product.title || product.displayName || "MeetCal subscription",
+        description: product.description || null,
+        formattedPrice: product.currentPrice.formattedPrice,
+        periodLabel: periodLabel(product.normalPeriodDuration, product.productType),
+      };
+    }));
+  });
 }
 
 export async function purchase_revenuecat_package(apiKey, appUserId, packageIdentifier) {
-  const purchases = await revenueCatForUser(apiKey, appUserId);
-  const offering = offeringWithWebPackages(await purchases.getOfferings());
-  const rcPackage = offering?.availablePackages.find(pkg => pkg.identifier === packageIdentifier);
-  if (!rcPackage) throw new Error("That subscription plan is no longer available. Refresh and try again.");
+  return withRevenueCatUser(apiKey, appUserId, async purchases => {
+    const offering = offeringWithWebPackages(await purchases.getOfferings());
+    const rcPackage = offering?.availablePackages.find(pkg => pkg.identifier === packageIdentifier);
+    if (!rcPackage) throw new Error("That subscription plan is no longer available. Refresh and try again.");
 
-  const customerEmail = window.Clerk?.user?.primaryEmailAddress?.emailAddress;
-  const result = await purchases.purchase({
-    rcPackage,
-    customerEmail,
-    skipSuccessPage: true,
+    const customerEmail = window.Clerk?.user?.primaryEmailAddress?.emailAddress;
+    const result = await purchases.purchase({
+      rcPackage,
+      customerEmail,
+      skipSuccessPage: true,
+    });
+    return hasActiveEntitlement(result.customerInfo);
   });
-  return hasActiveEntitlement(result.customerInfo);
 }
 "##)]
 extern "C" {
