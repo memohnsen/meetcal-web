@@ -10,6 +10,7 @@ pub fn Header() -> impl IntoView {
                 <span>"MeetCal"</span>
             </A>
             <nav class="site-nav" aria-label="Primary navigation">
+                <A href="/features">"Features"</A>
                 <A href="/privacy">"Privacy"</A>
                 <A href="/terms">"Terms"</A>
                 <A href="mailto:maddisen@meetcal.app">"Contact Us"</A>
