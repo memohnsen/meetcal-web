@@ -6,15 +6,13 @@ use meetcal_web::pages::{
         data_home::CompData, qual_totals::QualifyingTotals, rankings::Rankings, records::Records,
         results::Results, standards::Standards,
     },
+    features::FeaturesPage,
     home::Home,
     not_found::NotFound,
     privacy::PrivacyPage,
     terms::TermsPage,
 };
 use meetcal_web::{auth::provide_auth, components::subscription_gate::SubscriptionGate};
-    features::FeaturesPage, home::Home, not_found::NotFound, privacy::PrivacyPage,
-    terms::TermsPage,
-};
 
 fn main() {
     leptos::mount::mount_to_body(App)

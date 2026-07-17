@@ -53,9 +53,6 @@ pub fn PrivacyPolicy() -> impl IntoView {
                     <ul>
                         <li>"Name"</li>
                         <li>"Email address"</li>
-                        <li>
-                            "Role (e.g., athlete, coach, spectator, official, vendor, media)"
-                        </li>
                     </ul>
 
                     <p>
@@ -69,10 +66,13 @@ pub fn PrivacyPolicy() -> impl IntoView {
                         <li>
                             "Marketing communications about relevant weightlifting events and services"
                         </li>
+                        <li>
+                            "Tying purchases to the user account for cross-device access"
+                        </li>
                     </ul>
 
                     <p>
-                        "Users can opt out of sharing this information at any time through their account settings. We will never sell or share your personal information with third parties."
+                        "We will never sell or share your personal information with third parties."
                     </p>
 
                     <h2>
