@@ -1,0 +1,60 @@
+use anyhow::{Context, Error, Result};
+use serde::{Serialize, de::DeserializeOwned};
+
+const DEFAULT_API_BASE_URL: &str = "https://api.meetcal.app";
+
+fn api_base_url() -> String {
+    if option_env!("VERCEL").is_some() {
+        web_sys::window()
+            .and_then(|window| window.location().origin().ok())
+            .map(|origin| format!("{origin}/api"))
+            .unwrap_or_else(|| DEFAULT_API_BASE_URL.to_owned())
+    } else {
+        DEFAULT_API_BASE_URL.to_owned()
+    }
+}
+
+/// path: /route
+pub async fn get_api_response<T>(path: &str) -> Result<Vec<T>, Error>
+where
+    T: DeserializeOwned,
+{
+    let url = format!("{}{path}", api_base_url());
+
+    let response = reqwest::Client::new()
+        .get(&url)
+        .send()
+        .await
+        .with_context(|| format!("Failed to call MeetCal backend route {path}"))?
+        .error_for_status()
+        .with_context(|| format!("MeetCal backend route {path} returned an error"))?;
+
+    response
+        .json::<Vec<T>>()
+        .await
+        .with_context(|| format!("Failed to parse MeetCal backend response from {path}"))
+}
+
+/// path: /route
+/// query: array of tuples
+pub async fn get_api_response_with_query<T, Q>(path: &str, query: &Q) -> Result<T, Error>
+where
+    T: DeserializeOwned,
+    Q: Serialize + ?Sized,
+{
+    let url = format!("{}{path}", api_base_url());
+
+    let response = reqwest::Client::new()
+        .get(&url)
+        .query(query)
+        .send()
+        .await
+        .with_context(|| format!("Failed to call MeetCal backend route {path}"))?
+        .error_for_status()
+        .with_context(|| format!("MeetCal backend route {path} returned an error"))?;
+
+    response
+        .json::<T>()
+        .await
+        .with_context(|| format!("Failed to parse MeetCal backend response from {path}"))
+}
